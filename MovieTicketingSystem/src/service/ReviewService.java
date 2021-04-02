@@ -162,6 +162,7 @@ public class ReviewService {
 		System.out.println("=====================================");
 		System.out.println("1.수정     2.삭제      0.메인화면으로 돌아가기");
 		System.out.println("=====================================");
+		System.out.println("입력 > ");
 		int input = ScanUtil.nextInt();
 		switch(input){
 		case 1: reviewUpdate(); return View.REVIEW;

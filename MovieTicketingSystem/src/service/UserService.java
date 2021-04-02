@@ -55,7 +55,7 @@ public class UserService {
 		int result = userDao.insertUser(param);
 		
 		if(result > 0){
-			System.out.println("💘회원가입 성공");
+			System.out.println("✪ ω ✪ 💘 회원가입 성공 💘 ✪ ω ✪");
 		}else{
 			System.out.println("💢회원가입 실패");
 		}
@@ -68,9 +68,9 @@ public class UserService {
 		String password2 = null;
 		
 		while(true){
-			System.out.print("💙비밀번호>");
+			System.out.print("💙비밀번호 > ");
 			password = ScanUtil.nextLine();
-			System.out.print("💙비밀번호 확인>");
+			System.out.print("💙비밀번호 확인 > ");
 			password2 = ScanUtil.nextLine();
 			
 			if(!password.equals(password2)){

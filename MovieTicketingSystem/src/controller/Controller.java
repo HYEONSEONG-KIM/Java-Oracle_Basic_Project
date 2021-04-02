@@ -123,7 +123,7 @@ public class Controller {
 	     
 
 	System.out.println();
-		System.out.println("***********************************");
+		System.out.println("************* ༼ つ ◕_◕ ༽つ*************");
 		System.out.println(" 1.로그인🗝      2.회원가입❤      0.프로그램 종료💢");
 		System.out.println("***********************************");
 		System.out.print("선택 > ");
@@ -137,6 +137,7 @@ public class Controller {
 			return View.JOIN;
 		case 0 : //프로그램 종료
 			System.out.println("❌ 프로그램이 종료되었습니다 ❌");
+			System.out.println("   0( ﾟдﾟ)つ Bye");
 			System.exit(0);
 		}
 		return View.HOME; // 1, 2, 0 이외에 다른 숫자 입력시 다시 돌아오게 설정

@@ -338,7 +338,8 @@ public class ReservationService {
 				return 2;
 			}
 			System.out.println("💲 현재 보유 캐쉬 : " + myPayCash);
-			System.out.print("💲 결제하시겠습니까?(1.Yes 2.No) > ");
+			System.out.println("💲 결제하시겠습니까?(1.Yes 2.No) > ");
+			System.out.print("입력 > ");
 			
 			input = ScanUtil.nextInt();
 			if(input == 1){
