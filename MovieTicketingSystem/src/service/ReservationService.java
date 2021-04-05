@@ -18,12 +18,6 @@ public class ReservationService {
 
 	private ReservationService(){}
 	private static ReservationService instance;
-	List<Map<String,Object>> list;
-	SimpleDateFormat format = new SimpleDateFormat("MM-dd");
-	SimpleDateFormat RemoveFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:SS");
-	Date nowTime = new Date();
-	//현재시간을 원하는 데이터 포맷으로 변경하기 위해 String 타입으로 변환
-	String nowTimeStr = RemoveFormat.format(nowTime);
 
 	
 	int input;
@@ -38,12 +32,20 @@ public class ReservationService {
 	}
 	
 	private ReservationDao reservationDao = ReservationDao.getInstance();
+	List<Map<String,Object>> list;
+	SimpleDateFormat format = new SimpleDateFormat("MM-dd");
+	SimpleDateFormat RemoveFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:SS");
+	
+
+	
+	
 
 
-
+	//예매기능 시작 메서드
 	public int reservation() {
 		
 		String city = selectCity();
+		
 		if(city == null){
 			return View.MAIN_HOME;
 		}
@@ -69,10 +71,11 @@ public class ReservationService {
 	//지역선택
 	private String selectCity() {
 		String city;
+		int sequence = 1;
 		list = new ArrayList<>();
 		list = reservationDao.cinemaOfCityDao();
 		System.out.println("원하는 지역을 선택하세요(이전으로 돌아가려면 0번 입력)");
-		int sequence = 1;
+		
 		System.out.println("=============================");
 		System.out.println("번호\t|지역");
 		System.out.println("-----------------------------");
@@ -81,6 +84,7 @@ public class ReservationService {
 			sequence++;
 		}
 		System.out.println("=============================");
+		
 		while(true){
 			System.out.print("입력 > ");
 			System.out.println();
@@ -92,6 +96,7 @@ public class ReservationService {
 				break;
 			}
 		}
+		
 		if(input == 0){
 			city = null;
 		}else{
@@ -100,24 +105,27 @@ public class ReservationService {
 		return city;
 	}
 
+	
 
 		//영화관 선택
-		private String selectCinema(String city) {
-			System.out.println("원하는 영화관을 선택하여 주세요");
-			System.out.print("입력 > ");
-			list = new ArrayList<>();
-			list = reservationDao.showCinema(city);
-			System.out.println("=============================");
-			System.out.println("번호\t|영화관");
-			System.out.println("-----------------------------");
-			for(int i = 0; i < list.size(); i++){
-				System.out.println((i + 1) + "\t|" + list.get(i).get("CINEMA_NM"));
-			}
-			System.out.println("=============================");
-			System.out.print("입력 > ");
-			input = ScanUtil.nextInt();
-			String cinemaCode = (String)list.get(input - 1).get("CINEMA_CODE");
-			return cinemaCode;
+	private String selectCinema(String city) {
+		System.out.println("원하는 영화관을 선택하여 주세요");
+		System.out.print("입력 > ");
+		list = new ArrayList<>();
+		list = reservationDao.showCinema(city);
+		System.out.println("=============================");
+		System.out.println("번호\t|영화관");
+		System.out.println("-----------------------------");
+		
+		for(int i = 0; i < list.size(); i++){
+			System.out.println((i + 1) + "\t|" + list.get(i).get("CINEMA_NM"));
+		}
+			
+		System.out.println("=============================");
+		System.out.print("입력 > ");
+		input = ScanUtil.nextInt();
+		String cinemaCode = (String)list.get(input - 1).get("CINEMA_CODE");
+		return cinemaCode;
 		}
 
 	
@@ -129,6 +137,10 @@ public class ReservationService {
 		list = new ArrayList<>();
 		list = reservationDao.screen(cinemaCode);
 		
+		Date nowTime = new Date();
+		//현재시간을 원하는 데이터 포맷으로 변경하기 위해 String 타입으로 변환
+		String nowTimeStr = RemoveFormat.format(nowTime);
+		
 		Map<String,Object> cinema = new HashMap<>();
 		cinema = reservationDao.cinemaDao(cinemaCode);
 		String cinemaName = (String)cinema.get("CINEMA_NM");
@@ -137,27 +149,28 @@ public class ReservationService {
 		//서비스 이용시 해당 시간보다 지난 영화 상영 리스트 제외
 		for(int i = 0; i < list.size(); i++){
 			
-		//영화시간을 원하는 포맷으로 받기 위해 String타입으로 저장
-		String Time = RemoveFormat.format(list.get(i).get("상영날짜")) +" " + (String)list.get(i).get("상영시간") + ":00";
-		try {
-			//영화시간
-			Date movieTime = RemoveFormat.parse(Time);
-			//현재시간
-			Date NowTime = RemoveFormat.parse(nowTimeStr);
-			
-		    long result = movieTime.getTime() - NowTime.getTime();
-	
-		    if(result < 0){
-		    	list.remove(i);
-		    }
-			
-		} catch (ParseException e) {
-			e.printStackTrace();
-		}
+			//영화시간을 원하는 포맷으로 받기 위해 String타입으로 저장
+			//의도 : 오라클에서 영화날짜는 date 영화시간은 varchar2형태, 두 데이터를 자바로 가져와 string 타입으로 형변환후 date타입으로 다시 변환
+			String Time = RemoveFormat.format(list.get(i).get("상영날짜")) +" " + (String)list.get(i).get("상영시간") + ":00";
+			try {
+				//영화시간
+				Date movieTime = RemoveFormat.parse(Time);
+				//현재시간
+				Date NowTime = RemoveFormat.parse(nowTimeStr);
+				
+			    long result = movieTime.getTime() - NowTime.getTime();
+		
+			    if(result < 0){
+			    	list.remove(i);
+			    }
+				
+			} catch (ParseException e) {
+				e.printStackTrace();
+			}
 		
 		}
 		
-		
+		//상영시간표 정보 출력
 		System.out.println("*************************************"+ cinemaName + "*************************************");
 		System.out.printf("%s\t|%-40s\t|%s\t|%s\t|%s\t|%s", "번호", "영화제목", "상영날짜", "상영시간", "상영관", "남은좌석");
 		System.out.println();
